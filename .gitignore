@@ -1,0 +1,29 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+**/build/
+**/coverage/
+*.iml
+.idea/
+**/.gradle/
+**/.kotlin/
+**/ios/Pods/
+**/ios/Flutter/.last_build_id
+**/local.properties
+
+# Local secrets and environment files
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Writable Git metadata for the mounted read-only .git directory
+.gitrepo/
