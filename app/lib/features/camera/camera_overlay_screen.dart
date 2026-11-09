@@ -27,7 +27,7 @@ class _CameraOverlayScreenState extends ConsumerState<CameraOverlayScreen>
   final _overlayKey = GlobalKey();
   StreamSubscription<AccelerometerEvent>? _tiltSubscription;
   List<Offset> _corners = [];
-  var _opacity = 0.8;
+  var _opacity = 1.0;
   var _locked = false;
   var _grid = false;
   var _flashlight = false;

@@ -644,15 +644,332 @@ class SketchProjectsCompanion extends UpdateCompanion<SketchProjectRow> {
   }
 }
 
+class $BeaconQueueTable extends BeaconQueue
+    with TableInfo<$BeaconQueueTable, BeaconQueueData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BeaconQueueTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadJsonMeta = const VerificationMeta(
+    'payloadJson',
+  );
+  @override
+  late final GeneratedColumn<String> payloadJson = GeneratedColumn<String>(
+    'payload_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, payloadJson, createdAt, attempts];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'beacon_queue';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BeaconQueueData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('payload_json')) {
+      context.handle(
+        _payloadJsonMeta,
+        payloadJson.isAcceptableOrUnknown(
+          data['payload_json']!,
+          _payloadJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadJsonMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BeaconQueueData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BeaconQueueData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      payloadJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload_json'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+    );
+  }
+
+  @override
+  $BeaconQueueTable createAlias(String alias) {
+    return $BeaconQueueTable(attachedDatabase, alias);
+  }
+}
+
+class BeaconQueueData extends DataClass implements Insertable<BeaconQueueData> {
+  final String id;
+  final String payloadJson;
+  final DateTime createdAt;
+  final int attempts;
+  const BeaconQueueData({
+    required this.id,
+    required this.payloadJson,
+    required this.createdAt,
+    required this.attempts,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['payload_json'] = Variable<String>(payloadJson);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['attempts'] = Variable<int>(attempts);
+    return map;
+  }
+
+  BeaconQueueCompanion toCompanion(bool nullToAbsent) {
+    return BeaconQueueCompanion(
+      id: Value(id),
+      payloadJson: Value(payloadJson),
+      createdAt: Value(createdAt),
+      attempts: Value(attempts),
+    );
+  }
+
+  factory BeaconQueueData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BeaconQueueData(
+      id: serializer.fromJson<String>(json['id']),
+      payloadJson: serializer.fromJson<String>(json['payloadJson']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'payloadJson': serializer.toJson<String>(payloadJson),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'attempts': serializer.toJson<int>(attempts),
+    };
+  }
+
+  BeaconQueueData copyWith({
+    String? id,
+    String? payloadJson,
+    DateTime? createdAt,
+    int? attempts,
+  }) => BeaconQueueData(
+    id: id ?? this.id,
+    payloadJson: payloadJson ?? this.payloadJson,
+    createdAt: createdAt ?? this.createdAt,
+    attempts: attempts ?? this.attempts,
+  );
+  BeaconQueueData copyWithCompanion(BeaconQueueCompanion data) {
+    return BeaconQueueData(
+      id: data.id.present ? data.id.value : this.id,
+      payloadJson: data.payloadJson.present
+          ? data.payloadJson.value
+          : this.payloadJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BeaconQueueData(')
+          ..write('id: $id, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('attempts: $attempts')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, payloadJson, createdAt, attempts);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BeaconQueueData &&
+          other.id == this.id &&
+          other.payloadJson == this.payloadJson &&
+          other.createdAt == this.createdAt &&
+          other.attempts == this.attempts);
+}
+
+class BeaconQueueCompanion extends UpdateCompanion<BeaconQueueData> {
+  final Value<String> id;
+  final Value<String> payloadJson;
+  final Value<DateTime> createdAt;
+  final Value<int> attempts;
+  final Value<int> rowid;
+  const BeaconQueueCompanion({
+    this.id = const Value.absent(),
+    this.payloadJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BeaconQueueCompanion.insert({
+    required String id,
+    required String payloadJson,
+    required DateTime createdAt,
+    this.attempts = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       payloadJson = Value(payloadJson),
+       createdAt = Value(createdAt);
+  static Insertable<BeaconQueueData> custom({
+    Expression<String>? id,
+    Expression<String>? payloadJson,
+    Expression<DateTime>? createdAt,
+    Expression<int>? attempts,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (payloadJson != null) 'payload_json': payloadJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (attempts != null) 'attempts': attempts,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BeaconQueueCompanion copyWith({
+    Value<String>? id,
+    Value<String>? payloadJson,
+    Value<DateTime>? createdAt,
+    Value<int>? attempts,
+    Value<int>? rowid,
+  }) {
+    return BeaconQueueCompanion(
+      id: id ?? this.id,
+      payloadJson: payloadJson ?? this.payloadJson,
+      createdAt: createdAt ?? this.createdAt,
+      attempts: attempts ?? this.attempts,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (payloadJson.present) {
+      map['payload_json'] = Variable<String>(payloadJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BeaconQueueCompanion(')
+          ..write('id: $id, ')
+          ..write('payloadJson: $payloadJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('attempts: $attempts, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SketchProjectsTable sketchProjects = $SketchProjectsTable(this);
+  late final $BeaconQueueTable beaconQueue = $BeaconQueueTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [sketchProjects];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    sketchProjects,
+    beaconQueue,
+  ];
 }
 
 typedef $$SketchProjectsTableCreateCompanionBuilder =
@@ -975,10 +1292,204 @@ typedef $$SketchProjectsTableProcessedTableManager =
       SketchProjectRow,
       PrefetchHooks Function()
     >;
+typedef $$BeaconQueueTableCreateCompanionBuilder =
+    BeaconQueueCompanion Function({
+      required String id,
+      required String payloadJson,
+      required DateTime createdAt,
+      Value<int> attempts,
+      Value<int> rowid,
+    });
+typedef $$BeaconQueueTableUpdateCompanionBuilder =
+    BeaconQueueCompanion Function({
+      Value<String> id,
+      Value<String> payloadJson,
+      Value<DateTime> createdAt,
+      Value<int> attempts,
+      Value<int> rowid,
+    });
+
+class $$BeaconQueueTableFilterComposer
+    extends Composer<_$AppDatabase, $BeaconQueueTable> {
+  $$BeaconQueueTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BeaconQueueTableOrderingComposer
+    extends Composer<_$AppDatabase, $BeaconQueueTable> {
+  $$BeaconQueueTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BeaconQueueTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BeaconQueueTable> {
+  $$BeaconQueueTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get payloadJson => $composableBuilder(
+    column: $table.payloadJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+}
+
+class $$BeaconQueueTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BeaconQueueTable,
+          BeaconQueueData,
+          $$BeaconQueueTableFilterComposer,
+          $$BeaconQueueTableOrderingComposer,
+          $$BeaconQueueTableAnnotationComposer,
+          $$BeaconQueueTableCreateCompanionBuilder,
+          $$BeaconQueueTableUpdateCompanionBuilder,
+          (
+            BeaconQueueData,
+            BaseReferences<_$AppDatabase, $BeaconQueueTable, BeaconQueueData>,
+          ),
+          BeaconQueueData,
+          PrefetchHooks Function()
+        > {
+  $$BeaconQueueTableTableManager(_$AppDatabase db, $BeaconQueueTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BeaconQueueTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BeaconQueueTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BeaconQueueTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> payloadJson = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<int> attempts = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BeaconQueueCompanion(
+                id: id,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                attempts: attempts,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String payloadJson,
+                required DateTime createdAt,
+                Value<int> attempts = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BeaconQueueCompanion.insert(
+                id: id,
+                payloadJson: payloadJson,
+                createdAt: createdAt,
+                attempts: attempts,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BeaconQueueTable, BeaconQueueData>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $BeaconQueueTable,
+                    BeaconQueueData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BeaconQueueTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BeaconQueueTable,
+      BeaconQueueData,
+      $$BeaconQueueTableFilterComposer,
+      $$BeaconQueueTableOrderingComposer,
+      $$BeaconQueueTableAnnotationComposer,
+      $$BeaconQueueTableCreateCompanionBuilder,
+      $$BeaconQueueTableUpdateCompanionBuilder,
+      (
+        BeaconQueueData,
+        BaseReferences<_$AppDatabase, $BeaconQueueTable, BeaconQueueData>,
+      ),
+      BeaconQueueData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$SketchProjectsTableTableManager get sketchProjects =>
       $$SketchProjectsTableTableManager(_db, _db.sketchProjects);
+  $$BeaconQueueTableTableManager get beaconQueue =>
+      $$BeaconQueueTableTableManager(_db, _db.beaconQueue);
 }

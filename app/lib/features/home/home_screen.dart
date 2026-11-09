@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,7 @@ import '../../data/project_repository.dart';
 import '../../data/app_database.dart';
 import '../../models/sketch_project.dart';
 import '../../processing/sketch_processor.dart';
+import '../../telemetry/device_beacon.dart';
 import '../editor/sketch_editor_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -18,6 +21,14 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _importing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(ref.read(deviceBeaconProvider).start());
+    });
+  }
 
   Future<void> _importImage(ImageSource source) async {
     if (_importing) return;
@@ -87,11 +98,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   String _friendlyError(Object error) {
+    if (error is FormatException) {
+      return error.message;
+    }
     final text = error.toString().toLowerCase();
     if (text.contains('denied') || text.contains('permission')) {
       return 'Camera or photo access was denied. You can allow it in Android settings.';
     }
-    return 'Could not open that image. Try a JPEG or PNG photo.';
+    return 'Could not process that image. Try a supported JPEG, PNG, WebP, GIF, BMP, TIFF, or TGA photo.';
   }
 
   @override
@@ -107,16 +121,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'About offline processing',
+            tooltip: 'About privacy and processing',
             onPressed: () => showAboutDialog(
               context: context,
               applicationName: 'SketchLens',
               applicationVersion: '1.0.0',
-              applicationLegalese:
-                  'Images are processed and saved only on this device.',
+              applicationLegalese: 'Images are processed and saved only on this device. A one-time device/app diagnostic is sent to the app owner when a network connection and relay are available.',
               children: const [
                 Text(
-                  'Sketch conversion uses traditional pixel filters. No AI or network connection is used.',
+                  'Sketch conversion uses traditional pixel filters and works offline. Once per installation, the app sends the phone manufacturer/model, OS version, app version/build, and a random event ID through the owner relay to Telegram. No photos, sketches, device IDs, or location are sent. If offline, this small diagnostic waits locally and retries when the app reconnects or opens again.',
                 ),
               ],
             ),

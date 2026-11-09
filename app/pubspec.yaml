@@ -44,6 +44,11 @@ dependencies:
   sensors_plus: ^7.1.1
   wakelock_plus: ^1.8.2
   vector_math: ^2.4.4
+  connectivity_plus: ^7.3.2
+  device_info_plus: ^13.3.0
+  package_info_plus: ^10.2.2
+  dio: ^5.11.1
+  shared_preferences: ^2.5.6
 
 dev_dependencies:
   flutter_test:

@@ -7,6 +7,11 @@
 .pub/
 **/build/
 **/coverage/
+**/.venv/
+**/.pytest_cache/
+**/__pycache__/
+**/*.py[cod]
+server/beacons.sqlite3*
 *.iml
 .idea/
 **/.gradle/

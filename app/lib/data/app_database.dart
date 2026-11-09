@@ -37,14 +37,24 @@ class SketchProjects extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [SketchProjects])
+class BeaconQueue extends Table {
+  TextColumn get id => text()();
+  TextColumn get payloadJson => text()();
+  DateTimeColumn get createdAt => dateTime()();
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DriftDatabase(tables: [SketchProjects, BeaconQueue])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(driftDatabase(name: 'sketchlens'));
 
   var _thumbnailBackfillRunning = false;
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -52,6 +62,9 @@ class AppDatabase extends _$AppDatabase {
     onUpgrade: (migrator, from, to) async {
       if (from < 2) {
         await migrator.addColumn(sketchProjects, sketchProjects.thumbnailBytes);
+      }
+      if (from < 3) {
+        await migrator.createTable(beaconQueue);
       }
     },
   );
@@ -118,4 +131,30 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteProject(String id) =>
       (delete(sketchProjects)..where((table) => table.id.equals(id))).go();
+
+  Future<List<BeaconQueueData>> getPendingBeacons() =>
+      select(beaconQueue).get();
+
+  Future<void> enqueueBeacon(String id, String payloadJson) async {
+    await into(beaconQueue).insertOnConflictUpdate(
+      BeaconQueueCompanion.insert(
+        id: id,
+        payloadJson: payloadJson,
+        createdAt: DateTime.now().toUtc(),
+      ),
+    );
+  }
+
+  Future<void> deleteBeacon(String id) =>
+      (delete(beaconQueue)..where((row) => row.id.equals(id))).go();
+
+  Future<void> incrementBeaconAttempts(String id) async {
+    await (update(beaconQueue)..where((row) => row.id.equals(id))).write(
+      BeaconQueueCompanion.custom(
+        attempts: beaconQueue.attempts + const Constant(1),
+      ),
+    );
+  }
+
+  Future<void> clearBeaconQueue() => delete(beaconQueue).go();
 }
