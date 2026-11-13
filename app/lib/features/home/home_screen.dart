@@ -126,10 +126,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               context: context,
               applicationName: 'SketchLens',
               applicationVersion: '1.0.0',
-              applicationLegalese: 'Images are processed and saved only on this device. A one-time device/app diagnostic is sent to the app owner when a network connection and relay are available.',
+              applicationLegalese: 'Images are processed and saved only on this device. A one-time device/app diagnostic is sent to Telegram when a network connection is available.',
               children: const [
                 Text(
-                  'Sketch conversion uses traditional pixel filters and works offline. Once per installation, the app sends the phone manufacturer/model, OS version, app version/build, and a random event ID through the owner relay to Telegram. No photos, sketches, device IDs, or location are sent. If offline, this small diagnostic waits locally and retries when the app reconnects or opens again.',
+                  'Sketch conversion uses traditional pixel filters and works offline. Once per installation, this personal build sends the phone manufacturer/model, OS version, app version/build, and a random event ID to the configured Telegram chat. No photos, sketches, device IDs, or location are sent. If offline, this small diagnostic waits locally and retries when the app reconnects or opens again.',
                 ),
               ],
             ),

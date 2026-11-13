@@ -1,4 +1,6 @@
-from fastapi.testclient import TestClient
+import asyncio
+
+import httpx
 
 from app import main
 from app.main import DeviceBeacon, build_telegram_message
@@ -69,11 +71,23 @@ def test_relay_sends_once_and_deduplicates(monkeypatch, tmp_path) -> None:
             telegram_calls.append((url, json))
             return Response()
 
+    # ASGITransport exercises the route in-process, without opening a local
+    # listening socket. Keep this test usable in restricted CI environments.
+    real_async_client = httpx.AsyncClient
     monkeypatch.setattr(main.httpx, "AsyncClient", FakeAsyncClient)
     payload = sample_beacon().model_dump()
-    with TestClient(main.app) as client:
-        first = client.post("/api/v1/beacon", json=payload)
-        duplicate = client.post("/api/v1/beacon", json=payload)
+
+    async def post_twice():
+        main._initialize_db()
+        async with real_async_client(
+            transport=httpx.ASGITransport(app=main.app),
+            base_url="http://testserver",
+        ) as client:
+            first = await client.post("/api/v1/beacon", json=payload)
+            duplicate = await client.post("/api/v1/beacon", json=payload)
+        return first, duplicate
+
+    first, duplicate = asyncio.run(post_twice())
 
     assert first.status_code == 200
     assert first.json() == {"accepted": True, "duplicate": False}

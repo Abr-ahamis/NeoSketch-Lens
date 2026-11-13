@@ -18,7 +18,16 @@ flutter test
 flutter run
 ```
 
-Build an Android APK with `flutter build apk --release`. The output is written under `app/build/app/outputs/flutter-apk/`.
+For the private personal APK, set `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`
+in `server/.env`, then build from `app/` with:
+
+```sh
+./build_release.sh
+```
+
+The helper reads credentials from `server/.env` through a temporary,
+permission-restricted build file. The token is embedded in the APK; keep the APK
+private and never commit it. User images and sketches are never sent.
 
 ## Project layout
 

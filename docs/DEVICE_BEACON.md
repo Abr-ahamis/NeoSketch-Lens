@@ -1,55 +1,35 @@
-# Automatic one-time device beacon
+# Personal Telegram device beacon
 
-Sketch conversion remains local and offline. The one-time beacon is queued
-automatically on first app launch. It queues only
-the app name/version/build, platform, device manufacturer/brand/model, Android
-release/API level (or iOS model/system version), and a random event ID. It never
-includes photos, sketches, device identifiers, phone numbers, contacts, or
-location. A beacon already delivered to Telegram cannot be recalled from
-Telegram.
+The personal Android APK can send one device/app beacon directly to Telegram.
+The beacon includes app name/version/build, platform, manufacturer/brand/model,
+Android release/API level (or iOS model/system version), and a random event ID.
+It never includes photos, sketches, file paths, phone numbers, contacts, or
+location. Delivery is queued in SQLite and retried on launch, network recovery,
+or a timer while the app is running.
 
-The beacon is stored in the existing SQLite database until the relay responds
-successfully. While the app is running, delivery is attempted on launch, network
-restoration, and timed retry. If the process is stopped when connectivity
-returns, the pending beacon is sent the next time the app opens; this MVP does not
-run a background worker while the app is force-stopped.
+## Configure credentials
 
-## Run the relay
-
-Use Python 3.12+ and install `server/requirements.txt`. Add the rotated Telegram
-token and destination chat ID to the private, git-ignored `server/.env` file:
+Set these variables in the private, git-ignored `server/.env` file:
 
 ```dotenv
-TELEGRAM_BOT_TOKEN=put-the-rotated-token-here
-TELEGRAM_CHAT_ID=your-chat-id
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
 ```
 
-In this checkout, add them on **line 1** and **line 2** of
-`server/.env`. The file is excluded from git. Never put the bot token in Flutter,
-`--dart-define`, the APK, or source control. Then run:
+In this checkout, `TELEGRAM_BOT_TOKEN` is line 1 and `TELEGRAM_CHAT_ID` is line
+2. Never commit `server/.env`. The release helper reads those values into a
+temporary permission-restricted file and removes it when the build exits.
 
-```sh
-cd server
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-Put the relay behind HTTPS before using it outside a trusted local network. The
-relay accepts only the documented fields, escapes Telegram HTML, rate-limits by
-source IP, and deduplicates successfully delivered event IDs in SQLite. Keep the
-SQLite file on persistent storage. Do not paste the bot token into this chat or
-pass it as a Flutter build define.
-
-Build the Android app with the HTTPS endpoint:
+## Build the private APK
 
 ```sh
 cd app
-flutter build apk --release \
-  --dart-define=SKETCHLENS_BEACON_URL=https://your-domain.example/api/v1/beacon
+./build_release.sh
 ```
 
-Check `https://your-domain.example/healthz`; it reports whether the Telegram
-environment is configured without exposing the credentials. If the app has no
-endpoint configured, its one-time beacon remains queued locally until the app is
-rebuilt with the relay URL.
+The Telegram token and chat ID are compiled into this personal APK. Keep the APK
+on your own device and do not publish or share it. If the token is exposed,
+revoke it with BotFather and replace it in `server/.env` before rebuilding.
+
+The server relay in `server/` remains available as a safer option for any APK
+that will be shared; use [SERVER_SETUP.md](SERVER_SETUP.md) for that deployment.

@@ -13,10 +13,10 @@
 | Threat | Mitigation |
 |--------|------------|
 | Fake or spam telemetry | Per-install signed token, rate limits, schema validation, dedupe |
-| Leaked Telegram token | Token only on server, env var, revoke via BotFather if leaked |
+| Telegram token in personal APK | Owner authorizes this private build only; token is read from ignored `server/.env`, compiled into the APK, and must not be published or shared; revoke through BotFather if exposed |
 | Injection via Telegram messages | HTML-escape all user-derived text, truncate to 4096 chars |
 | Server DB leak | No PII stored, random IDs, retention limits, DB not publicly exposed |
-| Interception | HTTPS only, HSTS |
+| Interception | Telegram Bot API uses HTTPS |
 | PII in stack traces/messages | Client-side scrubber, server-side second scrub |
 | Abuse of admin endpoints | Separate admin token, owner chat ID check for bot commands |
 | Oversized payloads | Body limits, item caps, string truncation |

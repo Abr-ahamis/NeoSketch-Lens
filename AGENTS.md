@@ -311,9 +311,14 @@ Index on `(ts)`, `(fingerprint)`, `(install_id, ts)`. Retention job: delete even
 
 ---
 
-## 10. Telegram Bot Integration (server-side only)
+## 10. Telegram Bot Integration
 
-The bot token **never** goes in the app. The app talks only to your server; the server forwards to Telegram.
+The production/distributed design keeps the bot token server-side. The owner has
+explicitly authorized one exception for a private personal APK: the release
+helper may read the token and chat ID from ignored `server/.env` and inject them
+at build time. This means the token is extractable from that APK. Keep that APK
+private, never commit the credentials or APK, and use the server relay for any
+build that will be shared or published.
 
 ### 10.1 Setup
 1. In Telegram, talk to `@BotFather`, use `/newbot` (or reuse your existing bot) and copy the token.
@@ -389,7 +394,8 @@ Create `deploy/.env.example` with the same keys and empty values.
 - If a requirement is ambiguous, ask or choose the simplest option and write the decision into `docs/decisions.md`.
 - Do not delete or rewrite files unrelated to the task.
 - Never log or transmit user images, sketches or file paths.
-- Never place the Telegram token or install-token secret in the app or in git.
+- Never commit secrets. Only the specifically authorized private personal APK
+  may embed Telegram credentials; shared/release builds must use the server relay.
 
 ---
 
