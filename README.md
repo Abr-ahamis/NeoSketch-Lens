@@ -9,6 +9,9 @@ SketchLens is an Android drawing aid. Import a photo, convert it to line art on-
 
 ## Setup and run
 
+See [BUILDING.md](BUILDING.md) for Android SDK prerequisites, the private
+release build, installation, and logcat commands.
+
 ```sh
 cd app
 flutter pub get
